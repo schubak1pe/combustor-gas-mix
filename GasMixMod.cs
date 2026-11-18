@@ -477,6 +477,8 @@ public sealed partial class GasMixMod : MelonMod
         openKey = IntPtr.Zero;
         lastInjector = IntPtr.Zero;
         chooserSlot = -1;
+        applyMessage = null;
+        applyMessageUntil = 0f;
     }
 
     private static void Cleared(GasGrid __instance, bool __0)
@@ -874,6 +876,40 @@ public sealed partial class GasMixMod : MelonMod
         return count;
     }
 
+    private static void DrawApplyAll(
+        GasGrid grid,
+        Generator generator,
+        Mix mix,
+        GUIStyle button,
+        GUIStyle dim,
+        ref bool tracked)
+    {
+        if (GUILayout.Button(Tr("Apply to all", "Aplicar a todos"), button, GUILayout.Height(22f)))
+        {
+            int applied = ApplyMixToAll(grid, generator, mix);
+            chooserSlot = -1;
+            applyMessage = applied > 0
+                ? string.Format(Tr("Mix applied to {0} injectors.", "Mezcla aplicada a {0} inyectores."), applied)
+                : Tr("No other injectors.", "No hay otros inyectores.");
+            applyMessageUntil = Time.realtimeSinceStartup + 4f;
+        }
+        TrackPanel(ref tracked);
+
+        if (Time.realtimeSinceStartup < applyMessageUntil)
+        {
+            GUILayout.Label(applyMessage, dim);
+        }
+        else
+        {
+            GUILayout.Label(
+                Tr(
+                    "This also changes the main gas of every injector.",
+                    "Esto tambi\u00E9n cambia el gas principal de todos los inyectores."),
+                dim);
+        }
+        TrackPanel(ref tracked);
+    }
+
     private static void InjectorPanel(GasSimHud __instance)
     {
         if (!enabled || __instance == null)
@@ -972,6 +1008,10 @@ public sealed partial class GasMixMod : MelonMod
                 OpenChooser(-2);
             }
             TrackPanel(ref tracked);
+            if (mix == null)
+            {
+                DrawApplyAll(grid, generator, null, button, dim, ref tracked);
+            }
             if (mix != null && chooserSlot != -1)
             {
                 DrawChooser(hud, simulation, generator, mix, button, label, dim, ref tracked);
@@ -1040,30 +1080,7 @@ public sealed partial class GasMixMod : MelonMod
             dim);
         TrackPanel(ref tracked);
 
-        if (GUILayout.Button(Tr("Apply to all", "Aplicar a todos"), button, GUILayout.Height(22f)))
-        {
-            int applied = ApplyMixToAll(grid, generator, mix);
-            chooserSlot = -1;
-            applyMessage = applied > 0
-                ? string.Format(Tr("Mix applied to {0} injectors.", "Mezcla aplicada a {0} inyectores."), applied)
-                : Tr("No other injectors.", "No hay otros inyectores.");
-            applyMessageUntil = Time.realtimeSinceStartup + 4f;
-        }
-        TrackPanel(ref tracked);
-
-        if (Time.realtimeSinceStartup < applyMessageUntil)
-        {
-            GUILayout.Label(applyMessage, dim);
-        }
-        else
-        {
-            GUILayout.Label(
-                Tr(
-                    "This also changes the main gas of every injector.",
-                    "Esto tambi\u00E9n cambia el gas principal de todos los inyectores."),
-                dim);
-        }
-        TrackPanel(ref tracked);
+        DrawApplyAll(grid, generator, mix, button, dim, ref tracked);
 
         GUILayout.BeginHorizontal();
         if (mix.Extras.Count < MaxGases - 1 && mix.Total < MaxExtraShare - 0.001f)
