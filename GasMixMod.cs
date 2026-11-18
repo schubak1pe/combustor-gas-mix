@@ -93,6 +93,8 @@ public sealed partial class GasMixMod : MelonMod
     private static Vector2 guiMouse;
     private static bool mixPanelRectValid;
     private static float chooserOpenedAt;
+    private static string applyMessage;
+    private static float applyMessageUntil;
 
     public override void OnInitializeMelon()
     {
@@ -818,6 +820,60 @@ public sealed partial class GasMixMod : MelonMod
         chooserOpenedAt = Time.realtimeSinceStartup;
     }
 
+    private static int ApplyMixToAll(GasGrid grid, Generator source, Mix sourceMix)
+    {
+        if (grid == null || source == null)
+        {
+            return 0;
+        }
+        Il2CppSystem.Collections.Generic.List<Generator> list = grid.Generators;
+        if (list == null)
+        {
+            return 0;
+        }
+
+        IntPtr sourceKey = Key(source);
+        bool hasExtras = sourceMix != null && sourceMix.Extras.Count > 0;
+        int count = 0;
+        for (int i = 0; i < list.Count; i++)
+        {
+            Generator target = list[i];
+            if (target == null || Key(target) == sourceKey)
+            {
+                continue;
+            }
+
+            target.species = source.species;
+            IntPtr targetKey = Key(target);
+            if (!hasExtras)
+            {
+                Mixes.Remove(targetKey);
+                Ghosts.Remove(targetKey);
+                count++;
+                continue;
+            }
+
+            Mix copy = new Mix { X = target.x, Y = target.y, BaseSpecies = source.species };
+            for (int e = 0; e < sourceMix.Extras.Count; e++)
+            {
+                Extra extra = sourceMix.Extras[e];
+                copy.Extras.Add(new Extra { Species = extra.Species, Share = extra.Share });
+            }
+            Normalize(copy);
+            if (copy.Extras.Count == 0)
+            {
+                Mixes.Remove(targetKey);
+                Ghosts.Remove(targetKey);
+            }
+            else
+            {
+                Mixes[targetKey] = copy;
+            }
+            count++;
+        }
+        return count;
+    }
+
     private static void InjectorPanel(GasSimHud __instance)
     {
         if (!enabled || __instance == null)
@@ -982,6 +1038,31 @@ public sealed partial class GasMixMod : MelonMod
                 totalPercent,
                 100 - totalPercent),
             dim);
+        TrackPanel(ref tracked);
+
+        if (GUILayout.Button(Tr("Apply to all", "Aplicar a todos"), button, GUILayout.Height(22f)))
+        {
+            int applied = ApplyMixToAll(grid, generator, mix);
+            chooserSlot = -1;
+            applyMessage = applied > 0
+                ? string.Format(Tr("Mix applied to {0} injectors.", "Mezcla aplicada a {0} inyectores."), applied)
+                : Tr("No other injectors.", "No hay otros inyectores.");
+            applyMessageUntil = Time.realtimeSinceStartup + 4f;
+        }
+        TrackPanel(ref tracked);
+
+        if (Time.realtimeSinceStartup < applyMessageUntil)
+        {
+            GUILayout.Label(applyMessage, dim);
+        }
+        else
+        {
+            GUILayout.Label(
+                Tr(
+                    "This also changes the main gas of every injector.",
+                    "Esto tambi\u00E9n cambia el gas principal de todos los inyectores."),
+                dim);
+        }
         TrackPanel(ref tracked);
 
         GUILayout.BeginHorizontal();

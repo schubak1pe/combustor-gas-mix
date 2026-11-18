@@ -30,7 +30,9 @@ USO
 5. Ajusta el porcentaje de cada gas extra con el deslizador.
    El gas principal se queda con el porcentaje restante.
 6. Puedes anadir hasta 5 gases por inyector (1 principal + 4 extra).
-7. "Quitar mezcla" vuelve al comportamiento normal de un solo gas.
+7. "Aplicar a todos" copia la mezcla actual a todos los inyectores y cambia
+   tambien su gas principal. Util para dejar todos los inyectores iguales.
+8. "Quitar mezcla" vuelve al comportamiento normal de un solo gas.
 
 La mezcla se guarda junto al motor, en un archivo .gasmix al lado del .engine.
 Al volver a cargar el motor, la mezcla se restaura sola.

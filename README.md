@@ -1,10 +1,17 @@
 # Combustor Gas Mix
 
-**Descarga:** [CombustorGasMix.zip](https://github.com/schubak1pe/combustor-gas-mix/releases/latest) · [Release v1.0.0](https://github.com/schubak1pe/combustor-gas-mix/releases/tag/v1.0.0)
+**Descarga:** [CombustorGasMix.zip](https://github.com/schubak1pe/combustor-gas-mix/releases/latest)
 
 Mod de MelonLoader para Combustor que permite que un inyector ya colocado
 alimente varios gases a la vez, con porcentajes ajustables desde el panel del
 inyector.
+
+## Botones de la mezcla
+
+- **Aplicar a todos** — copia la composición actual a todos los inyectores y
+  cambia también su gas principal, así que todos acaban con la misma mezcla.
+- **Quitar mezcla** — vuelve al comportamiento de un solo gas, solo en el
+  inyector seleccionado.
 
 ## Como funciona
 

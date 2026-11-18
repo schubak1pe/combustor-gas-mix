@@ -224,6 +224,58 @@ public sealed partial class GasMixMod
                 + " generators=" + count
                 + " extraGas=" + again.ToString("0.###"));
             testPhase = 5;
+            testAt = now + 0.5f;
+            return;
+        }
+
+        if (testPhase == 5 && now >= testAt)
+        {
+            GasGrid grid = testSim.Grid;
+            if (grid != null && grid.Generators.Count > 0)
+            {
+                Generator source = grid.Generators[0];
+                if (source != null && Mixes.TryGetValue(Key(source), out Mix sourceMix))
+                {
+                    int altA = (source.species + 1) % grid.SpeciesCount;
+                    int altB = (source.species + 2) % grid.SpeciesCount;
+                    Generator targetA = new Generator
+                    {
+                        x = source.x + 8,
+                        y = source.y,
+                        species = altA,
+                        radius = 3f,
+                        rate = 10f,
+                        temperature = 300f,
+                        maxPressure = 0f,
+                        enabled = true
+                    };
+                    Generator targetB = new Generator
+                    {
+                        x = source.x + 16,
+                        y = source.y,
+                        species = altB,
+                        radius = 3f,
+                        rate = 10f,
+                        temperature = 300f,
+                        maxPressure = 0f,
+                        enabled = true
+                    };
+                    grid.Generators.Add(targetA);
+                    grid.Generators.Add(targetB);
+
+                    int applied = ApplyMixToAll(grid, source, sourceMix);
+                    bool ok = targetA.species == source.species
+                        && targetB.species == source.species
+                        && Mixes.ContainsKey(Key(targetA))
+                        && Mixes.ContainsKey(Key(targetB));
+                    MelonLogger.Msg("SELFTEST applyAll applied=" + applied
+                        + " ok=" + ok
+                        + " targetA=" + targetA.species
+                        + " targetB=" + targetB.species
+                        + " mixes=" + Mixes.Count);
+                }
+            }
+            testPhase = 6;
         }
     }
 
