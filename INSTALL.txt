@@ -1,0 +1,55 @@
+Combustor Gas Mix
+=================
+
+Mezcla dos o mas gases en los inyectores que ya existen en el juego, desde el
+mismo panel del inyector. No hay menus externos ni programas aparte.
+
+REQUISITOS
+----------
+- Combustor en Steam (Windows x64).
+- MelonLoader 0.7.3 instalado en la carpeta del juego.
+- Cierra el juego antes de instalar o quitar el mod.
+
+INSTALACION
+-----------
+1. En Steam, haz clic derecho en Combustor > Gestionar > Explorar archivos locales.
+2. Extrae este ZIP en la carpeta que contiene EngineSimulator.exe.
+   Acepta combinar la carpeta Mods.
+3. Arranca el juego.
+
+La ruta final debe quedar asi:
+
+  Mods\CombustorGasMix.dll
+
+USO
+---
+1. Coloca un inyector como siempre (herramienta Inyector / Inject).
+2. Haz clic en el inyector para abrir su panel.
+3. Abre "Mezcla de gases" (Gas mix) al final del panel.
+4. Pulsa "+ Anadir gas" y elige el segundo gas.
+5. Ajusta el porcentaje de cada gas extra con el deslizador.
+   El gas principal se queda con el porcentaje restante.
+6. Puedes anadir hasta 5 gases por inyector (1 principal + 4 extra).
+7. "Quitar mezcla" vuelve al comportamiento normal de un solo gas.
+
+La mezcla se guarda junto al motor, en un archivo .gasmix al lado del .engine.
+Al volver a cargar el motor, la mezcla se restaura sola.
+
+Los codigos para compartir motores llevan solo la construccion: no incluyen la
+mezcla de gases. Para conservarla, comparte tambien el archivo .gasmix.
+
+DESINSTALAR
+-----------
+Cierra el juego y borra:
+
+  Mods\CombustorGasMix.dll
+
+Los archivos .gasmix que quieras conservar puedes dejarlos donde estan.
+
+COMPATIBILIDAD
+--------------
+Probado en Windows x64, Combustor Steam build 26701522, Unity 6000.3.2f1,
+MelonLoader 0.7.3. El juego esta en IL2CPP, asi que una actualizacion grande
+puede cambiar los nombres internos y requerir una revision del mod.
+
+El texto del menu cambia solo entre espanol e ingles segun el idioma del juego.
